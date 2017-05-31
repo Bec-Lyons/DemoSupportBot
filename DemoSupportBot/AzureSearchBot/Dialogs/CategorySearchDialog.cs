@@ -22,12 +22,12 @@ namespace AzureSearchBot.Dialogs
                 FacetResult facetResult = await searchService.FetchFacets();
                 if (facetResult.searchfacets.ArticleCategory.Length != 0)
                 {
-                    List<string> eras = new List<string>();
-                    foreach (ArticleCategory era in facetResult.searchfacets.ArticleCategory)
+                    List<string> categories = new List<string>();
+                    foreach (ArticleCategory cat in facetResult.searchfacets.ArticleCategory)
                     {
-                        eras.Add($"{era.value} ({era.count})");
+                        categories.Add($"{cat.value} ({cat.count})");
                     }
-                    PromptDialog.Choice(context, AfterMenuSelection, eras, "Which topic do you want to search?");
+                    PromptDialog.Choice(context, AfterMenuSelection, categories, "Which topic do you want to search?");
                 }
                 else
                 {

@@ -22,7 +22,7 @@ namespace AzureSearchBot.Dialogs
         {
             /* Wait until the first message is received from the conversation and call MessageReceviedAsync 
              *  to process that message. */
-            await context.PostAsync("Hi. I'm a demo support.");
+            await context.PostAsync("Hi. I'm a demo support bot.");
             context.Wait(this.MessageRecievedAsync);
         }
 

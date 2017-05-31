@@ -33,7 +33,8 @@ namespace AzureSearchBot.Model
         public string ArticleBody { get; set; }
         public string ArticleIMG { get; set; }
         public string ArticleURL { get; set; }
-       
+        public string ArticleTopics { get; set; }
+
     }
 
     public class SearchFacets

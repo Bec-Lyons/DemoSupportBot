@@ -25,47 +25,60 @@ namespace AzureSearchBot.Dialogs
         public virtual async Task MessageRecievedAsync(IDialogContext context, IAwaitable<IMessageActivity> result)
         {
             var message = await result;
-            Boolean found = false;
-            try
-            {
-                SearchResult searchResult = await searchService.SearchByName(message.Text);
 
-                int checksum = 0;
-                foreach (Value musician in searchResult.value)
-                {
-                    if (checkValid(musician))
-                    {
-                        checksum++;
-                    }
-                }
-                if (searchResult.value.Length != 0 && checksum!=0)
-                {
-                    CardUtil.showHeroCard(message, searchResult);
-                    found = true;
-                }
-                else
-                {
-                    await context.PostAsync($"No information by the topic *{message.Text}* found");
-                    found = false;
-                }
-            }
-            catch (Exception e)
-            {
-                Debug.WriteLine($"Error when searching for topic: {e.Message}");
-            }
-            if (found)
+            if (message.Text == "go back" || message.Text=="cancel" || message.Text.Contains("go back"))
             {
                 context.Done<object>(null);
             }
-            else
-            {
-                PromptDialog.Choice(context, this.AfterMenuSelection, new List<string>() { "Search by Category", "Cancel" }, "How would you like to proceed?");
+            
+            
+            else {
+                Boolean found = false;
+                try
+                {
+                    SearchResult searchResult = await searchService.SearchByName(message.Text);
+
+                    int checksum = 0;
+                    foreach (Value article in searchResult.value)
+                    {
+                        if (checkValid(article))
+                        {
+                            checksum++;
+                        }
+                    }
+                    if (searchResult.value.Length != 0 && checksum != 0)
+                    {
+                        await context.PostAsync("Here are some blog posts you might find useful.");
+                        CardUtil.showHeroCard(message, searchResult);
+                        found = true;
+                    }
+                    else
+                    {
+                        await context.PostAsync($"No information by the topic *{message.Text}* found");
+                        found = false;
+                    }
+                }
+                catch (Exception e)
+                {
+                    Debug.WriteLine($"Error when searching for topic: {e.Message}");
+                }
+                if (found)
+                {
+                    await context.PostAsync("Didn't find what you're looking for? Try searching again. Or tell me to go back to the beginning.");
+                    context.Wait(MessageRecievedAsync);
+
+                }
+                else
+                {
+                    PromptDialog.Choice(context, this.AfterMenuSelection, new List<string>() { "Search by Category", "Cancel" }, "How would you like to proceed?");
+                }
             }
         }
 
         //After users select option, Bot call other dialogs
         private async Task AfterMenuSelection(IDialogContext context, IAwaitable<string> result)
         {
+            
             var optionSelected = await result;
             switch (optionSelected)
             {
