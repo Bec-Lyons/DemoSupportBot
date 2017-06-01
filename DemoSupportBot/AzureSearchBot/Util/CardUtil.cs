@@ -20,11 +20,22 @@ namespace AzureSearchBot.Util
                 {
                     List<CardImage> cardImages = new List<CardImage>();
                     //cardImages.Add(new CardImage(url: musician.ArticleIMG));
+                    String summarytext = "";
+
+                    if (article.ArticleBody.Length > 200)
+                    {
+                        summarytext = article.ArticleBody.Substring(0, 200) + "...";
+                    }
+                    else
+                    {
+                        summarytext = article.ArticleBody;
+                    }
+
                     HeroCard card = new HeroCard()
                     {
                         Title = article.ArticleTitle,
                         Subtitle = $"Category: {article.ArticleCategory } | Search Score: {article.searchscore}",
-                        Text = article.ArticleBody.Substring(0, 200) + "...",
+                        Text = summarytext,
                         Images = cardImages,
                         Buttons = new List<CardAction> { new CardAction(ActionTypes.OpenUrl, "See more.", value: "" + article.ArticleURL) }
 
